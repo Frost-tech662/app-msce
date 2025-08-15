@@ -1,0 +1,819 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Smart Student - MSCE Past Papers</title>
+  <meta name="description" content="Smart Student offers free access to MSCE past exam papers to help you prepare and excel."/>
+  <meta name="keywords" content="MSCE, Past Papers, Malawi, Exams, Smart Student"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+    body { background: #f7f9fb; min-height: 100vh; overflow-x: hidden; }
+    header { display: flex; justify-content: space-between; align-items: center; padding: 20px 5%; }
+    .logo { display: flex; align-items: center; cursor: pointer; }
+    .logo i { font-size: 2.5rem; color: #4a6bff; margin-right: 10px; }
+    .logo h1 { font-size: 1.8rem; font-weight: 700; background: linear-gradient(to right, #4a6bff, #a855f7); -webkit-background-clip: text; color: transparent; }
+    .menu-btn { font-size: 1.8rem; color: #4a6bff; cursor: pointer; padding: 10px; }
+    .menu { position: fixed; top: 0; right: -300px; width: 250px; height: 100vh; background: white; box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1); display: flex; flex-direction: column; padding: 80px 20px 20px; transition: right 0.4s ease; }
+    .menu.active { right: 0; }
+    .menu a { padding: 15px; margin: 10px 0; text-decoration: none; color: #333; font-weight: 600; border-radius: 8px; transition: 0.3s; }
+    .menu a:hover { background: #4a6bff; color: white; }
+    .back-btn { display: flex; align-items: center; color: #4a6bff; text-decoration: none; font-weight: 600; margin: 20px 5%; }
+    .back-btn i { margin-right: 8px; }
+    .container { padding: 30px 5%; }
+    .page-title { font-size: 2rem; margin-bottom: 20px; background: linear-gradient(to right, #4a6bff, #a855f7); -webkit-background-clip: text; color: transparent; text-align: center; }
+    #searchInput { width: 100%; max-width: 500px; padding: 10px; border-radius: 8px; border: 1px solid #ccc; margin: 0 auto 20px; display: block; }
+
+    .filters {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .filters select {
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    .paper-item {
+      background: white;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      padding: 15px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      border: 1px solid #ddd;
+    }
+
+    .paper-item:hover {
+      background: #eef3ff;
+    }
+
+    .paper-title {
+      font-weight: 600;
+      font-size: 1rem;
+      color: #333;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .skeleton-item {
+      height: 60px;
+      border-radius: 8px;
+      margin-bottom: 10px;
+      background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite;
+    }
+
+    @keyframes shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+
+    .pagination {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 30px;
+    }
+
+    .pagination button {
+      padding: 8px 14px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 12px;
+      background: linear-gradient(to right, #4a6bff, #a855f7);
+      color: white;
+      cursor: pointer;
+      transition: transform 0.2s ease, background 0.3s ease;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    }
+
+    .pagination button:hover {
+      transform: scale(1.05);
+    }
+
+    .pagination button.active {
+      background: linear-gradient(to right, #a855f7, #4a6bff);
+      box-shadow: 0 3px 8px rgba(74, 107, 255, 0.3);
+    }
+
+    .pagination button:disabled {
+      background: #ccc;
+      color: #555;
+      cursor: default;
+      box-shadow: none;
+    }
+
+    footer {
+      text-align: center;
+      padding: 20px;
+      color: #666;
+      font-size: 0.9rem;
+    }
+    
+    /* Scroll to Top Button */
+        #scrollTopBtn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 999;
+            font-size: 1.5rem;
+            background: linear-gradient(to right, #4a6bff, #a855f7);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            padding: 15px 18px;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(74, 107, 255, 0.3);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease, transform 0.3s ease;
+        }
+
+        #scrollTopBtn.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        #scrollTopBtn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 24px rgba(74, 107, 255, 0.4);
+        }
+
+        /* New Contact Section */
+        .contact-section {
+            padding: 80px 5%;
+            background: linear-gradient(135deg, #2c3e50 0%, #1a1a2e 100%);
+            color: white;
+            border-radius: 30px 30px 0 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .contact-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path fill="%234a6bff22" d="M0,0 L100,0 L100,100 Q50,80 0,100 Z"></path></svg>');
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            z-index: 0;
+            opacity: 0.1;
+        }
+
+        .contact-content {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 50px;
+        }
+
+        .contact-info, .newsletter {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .contact-section h3 {
+            font-size: 2.2rem;
+            margin-bottom: 20px;
+            background: linear-gradient(to right, #4a6bff, #a855f7);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .contact-section p {
+            font-size: 1.1rem;
+            color: #ddd;
+            line-height: 1.7;
+            margin-bottom: 25px;
+        }
+
+        .contact-details {
+            margin-top: 30px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .contact-item i {
+            font-size: 1.5rem;
+            color: #4a6bff;
+            margin-right: 15px;
+            width: 40px;
+            text-align: center;
+        }
+
+        .contact-text h4 {
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+            color: #fff;
+        }
+
+        .contact-text a {
+            color: #a855f7;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .contact-text a:hover {
+            color: #4a6bff;
+            text-decoration: underline;
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-icons a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 45px;
+            height: 45px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            color: white;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .social-icons a:hover {
+            background: #4a6bff;
+            transform: translateY(-5px);
+        }
+
+        .newsletter-form {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(74, 107, 255, 0.2);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 14px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #4a6bff;
+            background: rgba(74, 107, 255, 0.1);
+        }
+
+        .form-group input::placeholder {
+            color: #aaa;
+        }
+
+        .subscribe-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(to right, #4a6bff, #a855f7);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .subscribe-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(74, 107, 255, 0.4);
+        }
+
+        .copyright-notice {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.9rem;
+            color: #aaa;
+            line-height: 1.6;
+        }
+
+        /* Modern Footer */
+        .modern-footer {
+            background: #0f0f1b;
+            color: #aaa;
+            padding: 30px 5%;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            gap: 30px;
+        }
+
+        .footer-logo {
+            flex: 1;
+            min-width: 250px;
+            text-align: left;
+        }
+
+        .footer-logo h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            background: linear-gradient(to right, #4a6bff, #a855f7);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .footer-logo p {
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .footer-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+        }
+
+        .footer-links h4 {
+            color: #fff;
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .footer-links h4::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 40px;
+            height: 2px;
+            background: linear-gradient(to right, #4a6bff, #a855f7);
+        }
+
+        .footer-links ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: #aaa;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .footer-links a:hover {
+            color: #4a6bff;
+            padding-left: 5px;
+        }
+
+        .footer-bottom {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 0.85rem;
+        }
+
+        .legal-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 10px;
+        }
+
+        .legal-links a {
+            color: #aaa;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .legal-links a:hover {
+            color: #a855f7;
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-20px); }
+            60% { transform: translateY(-10px); }
+        }
+
+        @keyframes colorShift {
+            0% { filter: hue-rotate(0deg); }
+            100% { filter: hue-rotate(20deg); }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+            100% { transform: translateY(0) rotate(0deg); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h2 { font-size: 2.5rem; }
+            .hero p { font-size: 1rem; }
+            .founder-section h3 { font-size: 2rem; }
+            .founder-name { font-size: 1.5rem; }
+            .vision-mission { flex-direction: column; }
+            .vision, .mission { min-width: 100%; }
+            .footer-content {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+            }
+            
+            .footer-logo {
+                text-align: center;
+            }
+            
+            .footer-links {
+                justify-content: center;
+            }
+            
+            .footer-links h4::after {
+                left: 50%;
+                transform: translateX(-50%);
+            }
+        }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo" onclick="window.location.href='index.html'">
+      <i class="fas fa-graduation-cap"></i>
+      <h1>Smart Student</h1>
+    </div>
+    <div class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></div>
+    <div class="menu" id="menu">
+      <a href="index.html">Home</a>
+      <a href="B-msce.html">MSCE Papers</a>
+      <a href="C-jce.html">JCE Papers</a>
+    </div>
+  </header>
+
+  <a href="A-pdfs.html" class="back-btn"><i class="fas fa-arrow-left"></i> Back</a>
+
+  <div class="container">
+    <h1 class="page-title">PAMPHLETS</h1>
+    <input type="text" id="searchInput" placeholder="Search Pamphlet..." />
+    <div class="filters">
+      <select id="subjectFilter"><option value="">All Subjects</option></select>
+      <select id="yearFilter"><option value="">All Years</option></select>
+    </div>
+    <div class="papers-grid"></div>
+    <div class="pagination" id="pagination"></div>
+  </div>
+  
+  <!-- Contact Section -->
+    <section class="contact-section">
+        <div class="contact-content">
+            <div class="contact-info">
+                <h3 class="reveal">Connect With Us</h3>
+                <p class="reveal">Have questions, suggestions, or need support? Reach out to our team anytime. We're here to help you succeed.</p>
+                
+                <div class="contact-details">
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <div class="contact-text">
+                            <h4>Email Us</h4>
+                            <a href="mailto:support@smartstudent.mw">support@smartstudent.mw</a>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <i class="fas fa-phone-alt"></i>
+                        <div class="contact-text">
+                            <h4>Call Us</h4>
+                            <a href="tel:+265991234567">+265 991 234 567</a>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div class="contact-text">
+                            <h4>Visit Us</h4>
+                            <p>Education Innovation Hub<br>Lilongwe, Malawi</p>
+                        </div>
+                    </div>
+                    
+                  <!--  I've disabled the social icons for future use
+                  <div class="social-icons">
+                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a> 
+                    </div>
+                </div>
+            </div> -->
+            
+         <!-- I've disabled newsletters for future use
+         <div class="newsletter">
+                <h3 class="reveal">Stay Updated</h3>
+                <p class="reveal">Subscribe to our newsletter and be the first to know about new resources, exam updates, and learning tips.</p>
+                
+                <div class="newsletter-form scale-in">
+                    <div class="form-group">
+                        <label for="name">Your Name</label>
+                        <input type="text" id="name" placeholder="Enter your name">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" placeholder="Enter your email">
+                    </div>
+                    
+                    <button class="subscribe-btn">Subscribe Now</button> -->
+                    
+                    <div class="copyright-notice">
+                        <p><i class="fas fa-info-circle"></i> All educational materials provided on this platform are for learning purposes only. We respect intellectual property rights and do not claim ownership of copyrighted content. If you believe any material infringes on your copyright, please contact us immediately at <a href="mailto:copyright@smartstudent.mw">copyright@smartstudent.mw</a>.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Modern Footer -->
+    <footer class="modern-footer">
+        <div class="footer-content">
+            <div class="footer-logo">
+                <h3>Smart Student</h3>
+                <p>Empowering Malawian students with accessible educational resources and tools to achieve academic excellence.</p>
+            </div>
+            
+            <div class="footer-links">
+                <div>
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="A-pdfs.html">Study Materials</a></li>
+                        <li><a href="B-msce.html">MSCE Papers</a></li>
+                        <li><a href="C-jce.html">JCE Papers</a></li>
+                        
+                    </ul>
+                </div>
+                
+               <!-- <div>
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="#founder">About Us</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">FAQs</a></li>
+                    </ul>
+                </div> -->
+                
+                <div>
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="#">Contact Us</a></li>
+                        <li><a href="#">Report an Issue</a></li>
+                        <li><a href="#">Feedback</a></li>
+                        <li><a href="#">Donate</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2025 Smart Student. All rights reserved.</p>
+            <div class="legal-links">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Use</a>
+                <a href="#">Copyright Notice</a>
+                <a href="#">Cookie Policy</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scroll to Top Button -->
+    <button id="scrollTopBtn" title="Go to top"><i class="fas fa-arrow-up"></i></button>
+
+
+  <script>
+    const menuBtn = document.getElementById('menuBtn');
+    const menu = document.getElementById('menu');
+    menuBtn.addEventListener('click', e => {
+      e.stopPropagation();
+      menu.classList.toggle('active');
+    });
+    document.addEventListener('click', () => menu.classList.remove('active'));
+    menu.addEventListener('click', e => e.stopPropagation());
+
+    const papersGrid = document.querySelector('.papers-grid');
+    const searchInput = document.getElementById('searchInput');
+    const subjectFilter = document.getElementById('subjectFilter');
+    const yearFilter = document.getElementById('yearFilter');
+    const pagination = document.getElementById('pagination');
+
+    let allFiles = [];
+    let currentPage = 1;
+    const itemsPerPage = 20;
+
+    function showDummyLoading(count = 6) {
+      papersGrid.innerHTML = '';
+      for (let i = 0; i < count; i++) {
+        const skeleton = document.createElement('div');
+        skeleton.className = 'skeleton-item';
+        papersGrid.appendChild(skeleton);
+      }
+    }
+
+    showDummyLoading();
+
+    fetch("https://script.google.com/macros/s/AKfycbxgLeuQXBRxEi6RPQjYKNozKcoo0SRs5-GHkPAZ2K_mfKtGLEYb7qKS5A8u06LElTZ6/exec")
+      .then(res => res.json())
+      .then(files => {
+        allFiles = files;
+        populateFilters(files);
+        renderFiles(files);
+      })
+      .catch(err => {
+        papersGrid.innerHTML = '<p style="color:red;text-align:center;">Failed to load pamphlets. Please try again later.</p>';
+        console.error("Fetch error:", err);
+      });
+
+    function populateFilters(files) {
+      const subjects = new Set();
+      const years = new Set();
+      files.forEach(f => {
+        if (f.subject) subjects.add(f.subject);
+        if (f.year) years.add(f.year);
+      });
+
+      [...subjects].sort().forEach(s => {
+        subjectFilter.innerHTML += `<option value="${s}">${s}</option>`;
+      });
+
+      [...years].sort((a, b) => b - a).forEach(y => {
+        yearFilter.innerHTML += `<option value="${y}">${y}</option>`;
+      });
+    }
+
+    function renderFiles(files) {
+      const startIndex = (currentPage - 1) * itemsPerPage;
+      const paginatedFiles = files.slice(startIndex, startIndex + itemsPerPage);
+
+      papersGrid.innerHTML = '';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      if (paginatedFiles.length === 0) {
+        papersGrid.innerHTML = '<p style="text-align:center; color:#888;">No matching papers found.</p>';
+        pagination.innerHTML = '';
+        return;
+      }
+
+      paginatedFiles.forEach(file => {
+        const title = file.title.replace('.pdf', '');
+        const subject = file.subject || "Unknown";
+        const year = file.year && file.year.trim() !== "" ? file.year : "Unknown";
+
+        const fileIdMatch = file.url.match(/\/d\/(.*?)\//);
+        const fileId = fileIdMatch ? fileIdMatch[1] : '';
+
+        const wrapper = document.createElement('div');
+        wrapper.className = 'paper-item';
+        wrapper.setAttribute('data-subject', subject);
+        wrapper.setAttribute('data-year', year);
+        wrapper.innerHTML = `<div class="paper-title">${title}</div>`;
+
+        wrapper.addEventListener('click', () => {
+          window.open(`viewer.html?fileId=${fileId}`, '_blank');
+        });
+
+        papersGrid.appendChild(wrapper);
+      });
+
+      renderPaginationControls(files.length);
+    }
+
+    function renderPaginationControls(totalItems) {
+      const totalPages = Math.ceil(totalItems / itemsPerPage);
+      pagination.innerHTML = '';
+
+      if (totalPages <= 1) return;
+
+      const createButton = (label, page, isDisabled = false, isActive = false) => {
+        const btn = document.createElement('button');
+        btn.textContent = label;
+        if (isActive) btn.classList.add('active');
+        if (isDisabled) btn.disabled = true;
+        btn.addEventListener('click', () => {
+          currentPage = page;
+          applyFilters();
+        });
+        return btn;
+      };
+
+      pagination.appendChild(createButton('← Prev', currentPage - 1, currentPage === 1));
+
+      for (let i = 1; i <= totalPages; i++) {
+        pagination.appendChild(createButton(i, i, false, i === currentPage));
+      }
+
+      pagination.appendChild(createButton('Next →', currentPage + 1, currentPage === totalPages));
+    }
+
+    function applyFilters(resetPage = false) {
+      if (resetPage) currentPage = 1;
+
+      const term = searchInput.value.toLowerCase();
+      const selectedSubject = subjectFilter.value;
+      const selectedYear = yearFilter.value;
+
+      const filtered = allFiles.filter(file => {
+        const titleMatch = file.title.toLowerCase().includes(term);
+        const subjectMatch = selectedSubject ? file.subject === selectedSubject : true;
+        const yearMatch = selectedYear ? file.year === selectedYear : true;
+        return titleMatch && subjectMatch && yearMatch;
+      });
+
+      renderFiles(filtered);
+    }
+
+    searchInput.addEventListener('input', () => applyFilters(true));
+    subjectFilter.addEventListener('change', () => applyFilters(true));
+    yearFilter.addEventListener('change', () => applyFilters(true));
+    
+    const scrollBtn = document.getElementById('scrollTopBtn');
+
+window.addEventListener('scroll', () => {
+  const scrollTop = window.scrollY;
+  const windowHeight = window.innerHeight;
+  const bodyHeight = document.body.offsetHeight;
+
+  const reachedBottom = scrollTop + windowHeight >= bodyHeight - 50;
+
+  if (scrollTop > 200 && !reachedBottom) {
+    scrollBtn.classList.add('show');
+  } else {
+    scrollBtn.classList.remove('show');
+  }
+});
+
+scrollBtn.addEventListener('click', () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+  </script>
+</body>
+</html>
